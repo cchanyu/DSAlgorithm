@@ -8,7 +8,7 @@ public class DiskSchedule {
 	public int header, header2, header3;
 	public int[] cylinder = new int[5000];
 	public int[] generated = new int[1000];
-	public int positive, count, count2;
+	public int count, count2, temp, calc;
 	public static enum Algorithm {FCFS, SSTF, SCAN};
 	
 	// Disk schedule
@@ -17,7 +17,7 @@ public class DiskSchedule {
 		generating();
 		FCFS();
 		//SSTF();
-		//SCAN();
+		SCAN();
 	}
 	
 	// This function inserts orderly generated values into arrays.
@@ -53,23 +53,21 @@ public class DiskSchedule {
 		System.out.println("System: FCFS() is triggered.");
 
 		// Select the starting header
-		count = 0;
+		count = 0; count2 = 0;
 		header = generated[0];
 		header3 = generated[0];
-		cylinder[header] = -1;
 		
-		System.out.println("System: Header = " + generated[0] + ", Arr Length = " + generated.length);
+		System.out.println("System: Header = " + generated[0] + ", generated Length = " + generated.length);
 		
 		// New attempt
-		for(int i = 0; i < generated.length; i++) {
+		for(int i = 1; i < generated.length; i++) {
 			header = generated[i];
-			cylinder[header] = -1;
-			count++;
 			
 			// head move count system
-			int calc = header - cylinder[i];
-			positive = Math.abs(calc);
-			count2 = count2 + (positive);
+			int calc = Math.abs(header - cylinder[generated[i-1]]);
+			//System.out.println(header + " - " + cylinder[generated[i-1]] + " = " + calc);
+			count2 = count2 + (calc);
+			count++;
 		}
 
 		System.out.println("System: Header = " + header3 + ", Move count = " + count2);
@@ -92,7 +90,63 @@ public class DiskSchedule {
 	public void SCAN() {
 		System.out.println("System: SCAN() is triggered.");
 		
+		count = 0; count2 = 0;
+		header = generated[0];
+		header3 = generated[0];
 		
+		System.out.println("System: Header = " + generated[0] + ", generated Length = " + generated.length);
+		
+		// sorting in ascending order
+		for (int i = 0; i < generated.length; i++) {
+            for (int j = i + 1; j < generated.length; j++) { 
+                if (generated[i] > generated[j]) {
+                    temp = generated[i];
+                    generated[i] = generated[j];
+                    generated[j] = temp;
+                }
+            }
+        }
+		
+		// find the index 
+        int len = generated.length; 
+        int k = 0;
+        int ans = 0;
+        
+        while (k < len) { 
+            if (generated[k] == header) { 
+                 ans = k;
+                 //System.out.println(ans);
+                 break;
+            } 
+            else { k = k + 1; }
+        }
+		
+        // while it's less than the q it goes down elevator
+		for(int q = ans; q > 0; q--) {
+			header = generated[q];
+			
+			int calc = Math.abs(header - cylinder[generated[q-1]]);
+			//System.out.println(header + " - " + cylinder[generated[q-1]] + " = " + calc);
+			count2 = count2 + (calc);
+			count++;
+		}
+		
+		// goes up elevator
+		count2 = count2 + header3;
+		
+		// counting up to the end
+		for (int g = ans; g < generated.length; g++) {
+			header = generated[g];
+
+			int calc = Math.abs(header - cylinder[generated[g-1]]);
+			//System.out.println(header + " - " + cylinder[generated[g-1]] + " = " + calc);
+			count2 = count2 + (calc);
+			count++;
+		}
+
+		System.out.println("System: Header = " + header3 + ", Move count = " + count2);
+		//System.out.println("Cylinder[]: " + Arrays.toString(cylinder));
+		//System.out.println("Generated[]: " + Arrays.toString(generated)); 
 		
 		System.out.println("System: SCAN() has been processed.");
 	}
