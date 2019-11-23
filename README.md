@@ -8,10 +8,10 @@
 N/A
 ```
 
-### Picture:
+### Pictures:
 <a href = "PICS/pic1.png"><img src = "PICS/pic1.png">
 
-### Assignment Goal:
+### Assignment:
 
 ```
 This homework is due on Friday, December 6, 2019 
