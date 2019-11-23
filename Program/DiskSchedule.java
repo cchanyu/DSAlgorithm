@@ -1,5 +1,4 @@
 import java.util.Random;
-import java.util.Arrays;
 import java.lang.Math; 
 
 public class DiskSchedule {
@@ -16,7 +15,7 @@ public class DiskSchedule {
 		cylinders();
 		generating();
 		FCFS();
-		//SSTF();
+		SSTF();
 		SCAN();
 	}
 	
@@ -57,7 +56,7 @@ public class DiskSchedule {
 		header = generated[0];
 		header3 = generated[0];
 		
-		System.out.println("System: Header = " + generated[0] + ", generated Length = " + generated.length);
+		System.out.println("System: Header = " + generated[0] + ", Length = " + generated.length);
 		
 		// New attempt
 		for(int i = 1; i < generated.length; i++) {
@@ -81,7 +80,17 @@ public class DiskSchedule {
 	public void SSTF() {
 		System.out.println("System: SSTF() is triggered.");
 		
+		count = 0; count2 = 0;
+		header = generated[0];
+		header3 = generated[0];
 		
+		System.out.println("System: Header = " + generated[0] + ", Length = " + generated.length);
+		
+		// add code
+		
+		System.out.println("System: Header = " + header3 + ", Move count = " + count2);
+		//System.out.println("Cylinder[]: " + Arrays.toString(cylinder));
+		//System.out.println("Generated[]: " + Arrays.toString(generated)); 
 		
 		System.out.println("System: SSTF() has been processed.");
 	}
@@ -94,10 +103,10 @@ public class DiskSchedule {
 		header = generated[0];
 		header3 = generated[0];
 		
-		System.out.println("System: Header = " + generated[0] + ", generated Length = " + generated.length);
+		System.out.println("System: Header = " + generated[0] + ", Length = " + generated.length);
 		
 		// sorting in ascending order
-		for (int i = 0; i < generated.length; i++) {
+		for(int i = 0; i < generated.length; i++) {
             for (int j = i + 1; j < generated.length; j++) { 
                 if (generated[i] > generated[j]) {
                     temp = generated[i];
@@ -112,7 +121,7 @@ public class DiskSchedule {
         int k = 0;
         int ans = 0;
         
-        while (k < len) { 
+        while(k < len) { 
             if (generated[k] == header) { 
                  ans = k;
                  //System.out.println(ans);
@@ -135,7 +144,7 @@ public class DiskSchedule {
 		count2 = count2 + header3;
 		
 		// counting up to the end
-		for (int g = ans; g < generated.length; g++) {
+		for(int g = ans; g < generated.length; g++) {
 			header = generated[g];
 
 			int calc = Math.abs(header - cylinder[generated[g-1]]);
