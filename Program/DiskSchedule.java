@@ -19,15 +19,15 @@ public class DiskSchedule {
 	public DiskSchedule() {
 		cylinders();
 		generating();
-		
+
 		Scanner sc = new Scanner(System.in);
 		System.out.print("System: Type the initial header: ");
 		int initialHeader = sc.nextInt();
-		
+
 		Scanner sc2 = new Scanner(System.in);
 		System.out.print("System: Type the case: ");
 		Algorithm algorithm = Algorithm.valueOf(sc2.next().toUpperCase());
-		
+
 		System.out.println("System: Header = " + initialHeader);
 		switch (algorithm) {
 		case FCFS:
@@ -51,12 +51,12 @@ public class DiskSchedule {
 	// This function inserts orderly generated values into arrays.
 	public void cylinders() {
 		System.out.println("System: cylinder() is triggered.");
-		
+
 		// Assigning numbers to arrays
 		for (int i = 0; i < 5000; i++) {
 			cylinder[i] = i;
 		}
-		
+
 		// System.out.println("Cylinder[]: " + Arrays.toString(cylinder));
 		System.out.println("System: cylinder() has been processed.");
 		System.out.println("-----------------------------");
@@ -65,14 +65,14 @@ public class DiskSchedule {
 	// This function inserts randomly generated values into arrays.
 	public void generating() {
 		System.out.println("System: generating() is triggered.");
-		
+
 		// Assigning random to arrays
 		Random rand = new Random();
 		for (int i = 0; i < 1000; i++) {
 			// Selects any number from 0-4999
 			generated[i] = rand.nextInt(5000);
 		}
-		
+
 		// System.out.println("Generated[]: " + Arrays.toString(generated));
 		System.out.println("System: generating() has been processed.");
 		System.out.println("-----------------------------");
@@ -81,20 +81,20 @@ public class DiskSchedule {
 	// First Come First Serve Algorithm
 	public int FCFS(int initialHeader) {
 		System.out.println("System: FCFS() is triggered.");
-		
+
 		// Select the starting header
 		count = 0;
 		count2 = 0;
 		header = initialHeader;
 		header3 = initialHeader;
-		
+
 		System.out.println("System: Header = " + initialHeader + ", Length = " + generated.length);
-		
+
 		int calc2 = Math.abs(initialHeader - cylinder[generated[0]]);
 		count2 = count2 + (calc2);
 		count++;
 		header = generated[0];
-		
+
 		// New attempt
 		for (int i = 1; i < generated.length; i++) {
 			header = generated[i];
@@ -104,7 +104,7 @@ public class DiskSchedule {
 			count2 = count2 + (calc);
 			count++;
 		}
-		
+
 		System.out.println("System: Header = " + header3 + ", Move count = " + count2);
 		// System.out.println("Cylinder[]: " + Arrays.toString(cylinder));
 		// System.out.println("Generated[]: " + Arrays.toString(generated));
@@ -116,17 +116,17 @@ public class DiskSchedule {
 	// Shortest Seek Time First Algorithm
 	public int SSTF(int initialHeader) {
 		System.out.println("System: SSTF() is triggered.");
-		
+
 		count = 0;
 		count2 = 0;
 		header = initialHeader;
 		header3 = initialHeader;
-		
-		//System.out.println("Generated Length = " + generated.length);
-		generated[generated.length-1] = initialHeader;
-		
+
+		// System.out.println("Generated Length = " + generated.length);
+		generated[generated.length - 1] = initialHeader;
+
 		System.out.println("System: Header = " + initialHeader + ", Length = " + generated.length);
-		
+
 		// sorting in ascending order
 		for (int i = 0; i < generated.length; i++) {
 			for (int j = i + 1; j < generated.length; j++) {
@@ -137,7 +137,7 @@ public class DiskSchedule {
 				}
 			}
 		}
-		
+
 		// find the index
 		int len = generated.length;
 		int k = 0;
@@ -145,39 +145,48 @@ public class DiskSchedule {
 		while (k < len) {
 			if (generated[k] == header) {
 				ans = k;
-				// System.out.println(ans);
+				System.out.println("Head Pivot: " + ans);
 				break;
 			} else {
 				k = k + 1;
 			}
 		}
-		
+
 		// add code
 		header = generated[ans];
-		// if next value is bigger than last value, then it goes down now.
-			for (int g = ans; g < generated.length; g++) {
-					int calc1 = Math.abs(header - cylinder[generated[g - 1]]);
-					System.out.println("Before: " + header + " - " + cylinder[generated[g - 1]] + " = " + calc1);
-					int calc2 = Math.abs(header - cylinder[generated[g + 1]]);
-					System.out.println("After: " + header + " - " + cylinder[generated[g + 1]] + " = " + calc2);
-				
-					if(calc1 > calc2) {
-						header = generated[g+1];
-					} else {
-						header = generated[g-1];
-					}
-				
-					remove(generated, g);
-					System.out.println("New Header: " + header);
-					//System.out.println("Generated[]: " + Arrays.toString(generated));
-					count2 = count2 + (calc1) + (calc2);
-					count++;
-			}	
+		int g = ans, z = ans, count4 = 1;
+		while (g > 0 || g < generated.length) {
+			int calc1 = 0, calc2 = 0;
+			int b4 = generated[z - count4];
+			int a4 = generated[z + count4];
+			calc1 = Math.abs(header - cylinder[b4]);
+			System.out.println("Before: " + header + " - " + cylinder[b4] + " = " + calc1);
+			calc2 = Math.abs(header - cylinder[a4]);
+			System.out.println("After: " + header + " - " + cylinder[a4] + " = " + calc2);
 
-		
+			if (calc1 > calc2) {
+				header = generated[z + count4];
+				count2 = count2 + (calc2);
+				System.out.println("New Header: " + header);
+				generated = remove(generated, z);
+				z = g;
+				g--; count4 --;
+			} else {
+				header = generated[z - count4];
+				count2 = count2 + (calc1);
+				System.out.println("New Header: " + header);
+				generated = remove(generated, z);
+				z = g;
+				g++; count4 ++;
+			}
+
+			// System.out.println("Generated[]: " + Arrays.toString(generated));
+			count++;
+		}
+
 		System.out.println("System: Header = " + header3 + ", Move count = " + count2);
-		//System.out.println("Cylinder[]: " + Arrays.toString(cylinder));
-		//System.out.println("Generated[]: " + Arrays.toString(generated));
+		// System.out.println("Cylinder[]: " + Arrays.toString(cylinder));
+		// System.out.println("Generated[]: " + Arrays.toString(generated));
 		System.out.println("System: SSTF() has been processed.");
 		System.out.println("-----------------------------");
 		return count2;
@@ -186,17 +195,17 @@ public class DiskSchedule {
 	// Elevator Algorithm
 	public int SCAN(int initialHeader) {
 		System.out.println("System: SCAN() is triggered.");
-		
+
 		count = 0;
 		count2 = 0;
 		header = initialHeader;
 		header3 = initialHeader;
-		
-		//System.out.println("Generated Length = " + generated.length);
-		generated[generated.length-1] = initialHeader;
-		
+
+		// System.out.println("Generated Length = " + generated.length);
+		generated[generated.length - 1] = initialHeader;
+
 		System.out.println("System: Header = " + initialHeader + ", Length = " + generated.length);
-		
+
 		// sorting in ascending order
 		for (int i = 0; i < generated.length; i++) {
 			for (int j = i + 1; j < generated.length; j++) {
@@ -207,7 +216,7 @@ public class DiskSchedule {
 				}
 			}
 		}
-		
+
 		// find the index
 		int len = generated.length;
 		int k = 0;
@@ -215,20 +224,21 @@ public class DiskSchedule {
 		while (k < len) {
 			if (generated[k] == header) {
 				ans = k;
-				//System.out.println("Ans = " + ans);
+				// System.out.println("Ans = " + ans);
 				break;
 			} else {
 				k++;
 			}
 		}
-		
+
 		if (initialHeader < 2500) {
 
 			// while it's less than the q it goes down elevator
 			for (int q = ans; q > 0; q--) {
 				header = generated[q];
 				int calc = Math.abs(header - cylinder[generated[q - 1]]);
-				//System.out.println(header + " - " + cylinder[generated[q - 1]] + " = " + calc);
+				// System.out.println(header + " - " + cylinder[generated[q - 1]] + " = " +
+				// calc);
 				count2 = count2 + (calc);
 				count++;
 			}
@@ -236,7 +246,7 @@ public class DiskSchedule {
 			// goes up elevator
 			// make it go to 0 and then up
 			count2 = count2 + Math.abs(header - 0);
-			//System.out.println("Header = " + header);
+			// System.out.println("Header = " + header);
 			count2 = count2 + header3;
 			header = 0;
 
@@ -244,7 +254,8 @@ public class DiskSchedule {
 			for (int g = ans; g < generated.length; g++) {
 				header = generated[g];
 				int calc = Math.abs(header - cylinder[generated[g - 1]]);
-				//System.out.println(header + " - " + cylinder[generated[g - 1]] + " = " + calc);
+				// System.out.println(header + " - " + cylinder[generated[g - 1]] + " = " +
+				// calc);
 				count2 = count2 + (calc);
 				count++;
 			}
@@ -256,7 +267,8 @@ public class DiskSchedule {
 			for (int q = ans; q < generated.length; q++) {
 				header = generated[q];
 				int calc = Math.abs(header - cylinder[generated[q - 1]]);
-				System.out.println(header + " - " + cylinder[generated[q-1]] + " = " + calc);
+				// System.out.println(header + " - " + cylinder[generated[q - 1]] + " = " +
+				// calc);
 				count2 = count2 + (calc);
 				count++;
 			}
@@ -271,7 +283,8 @@ public class DiskSchedule {
 			for (int g = ans; g > 0; g--) {
 				header = generated[g];
 				int calc = Math.abs(header - cylinder[generated[g - 1]]);
-				System.out.println(header + " - " + cylinder[generated[g-1]] + " = " + calc);
+				// System.out.println(header + " - " + cylinder[generated[g - 1]] + " = " +
+				// calc);
 				count2 = count2 + (calc);
 				count++;
 			}
@@ -285,17 +298,17 @@ public class DiskSchedule {
 	}
 
 	// Add remove function
-	public static int[] remove(int[] arr, int index) {
+	public static int[] remove(int[] generated, int index) {
+		
+		int[] temp = new int[generated.length - 1];
 
-		if (arr == null || index < 0 || index >= arr.length) { return arr; }
-
-		int[] arr2 = new int[arr.length - 1];
-
-		for (int i = 0, k = 0; i < arr.length; i++) {
-			if (i == index) { continue; }
-			arr2[k++] = arr[i];
+		for (int i = 0, k = 0; i < generated.length; i++) {
+			if (i == index) {
+				continue;
+			}
+			temp[k++] = generated[i];
 		}
-		return arr2;
+		return temp;
 	}
 
 	// Main method
