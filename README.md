@@ -8,7 +8,7 @@
 This program has three disk scheduling algorithms.
 
 Disk Scheduling is done by an Operating Systems and
-each I/O will be processed in a disk.
+each I/O request will be processed in the disk.
 
 - 5,000 Disk cylinders from 0 - 4999
 - 1,000 Randomly generated cylinder requests
