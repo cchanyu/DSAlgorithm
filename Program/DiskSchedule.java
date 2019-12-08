@@ -8,7 +8,7 @@ public class DiskSchedule {
 	public int header, header2, header3;
 	public int value1, value2, value3;
 	public int[] cylinder = new int[5000];
-	public int[] generated = new int[1001]; // 1 extra for initial header
+	public int[] generated = new int[1000];
 	public int count, count2, temp, calc, ans;
 
 	public static enum Algorithm {
@@ -137,7 +137,7 @@ public class DiskSchedule {
 
 		// find the index
 		ans = findIndex(generated, header);
-		
+
 		// while ans is in index, it runs
 		header = generated[ans];
 		while ((0 < ans) && (ans < generated.length)) {
@@ -147,24 +147,28 @@ public class DiskSchedule {
 			// calculates before distance
 			before = generated[ans - 1];
 			dist1 = Math.abs(header - cylinder[before]);
-			//System.out.println("Before: " + header + " - " + cylinder[before] + " = " + dist1);
+			// System.out.println("Before: " + header + " - " + cylinder[before] + " = " +
+			// dist1);
 
 			// calculates after distance
 			after = generated[ans + 1];
 			dist2 = Math.abs(header - cylinder[after]);
-			//System.out.println("After: " + header + " - " + cylinder[after] + " = " + dist2);
+			// System.out.println("After: " + header + " - " + cylinder[after] + " = " +
+			// dist2);
 
 			// if before is farther than after, it picks future value
 			if (dist1 > dist2) {
 				ans = ans + 1;
 				header = generated[ans];
 				count2 = count2 + (dist2);
-				//System.out.println("New Header: " + header + ", Ans: " + ans + ", Length: " + generated.length);
+				// System.out.println("New Header: " + header + ", Ans: " + ans + ", Length: " +
+				// generated.length);
 			} else {
 				ans = ans - 1;
 				header = generated[ans];
 				count2 = count2 + (dist1);
-				//System.out.println("New Header: " + header + ", Ans: " + ans + ", Length: " + generated.length);
+				// System.out.println("New Header: " + header + ", Ans: " + ans + ", Length: " +
+				// generated.length);
 			}
 
 			generated = remove(generated, ans);
@@ -174,7 +178,7 @@ public class DiskSchedule {
 		// when ans is either 0 or max, it runs
 		if (ans == 0) {
 			// going up
-			for (int q = ans+1; q < generated.length; q++) {
+			for (int q = ans + 1; q < generated.length; q++) {
 				header = generated[q];
 				int calc = Math.abs(header - cylinder[generated[q - 1]]);
 				count2 = count2 + (calc);
@@ -182,7 +186,7 @@ public class DiskSchedule {
 			}
 		} else if (ans == generated.length) {
 			// going down
-			for (int q = ans-1; q > 0; q--) {
+			for (int q = ans - 1; q > 0; q--) {
 				header = generated[q];
 				int calc = Math.abs(header - cylinder[generated[q - 1]]);
 				count2 = count2 + (calc);
@@ -224,7 +228,7 @@ public class DiskSchedule {
 		}
 
 		// find the index
-				ans = findIndex(generated, header);
+		ans = findIndex(generated, header);
 
 		if (initialHeader < 2500) {
 
