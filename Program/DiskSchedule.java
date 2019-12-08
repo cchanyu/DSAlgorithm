@@ -8,7 +8,7 @@ public class DiskSchedule {
 	public int header, header2, header3;
 	public int value1, value2, value3;
 	public int[] cylinder = new int[5000];
-	public int[] generated = new int[1000];
+	public int[] generated = new int[1001]; // 1 extra for initial header
 	public int count, count2, temp, calc, ans;
 
 	public static enum Algorithm {
