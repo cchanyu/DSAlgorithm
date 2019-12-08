@@ -5,11 +5,37 @@
 
 ### Description: 
 ``` 
+This program has three disk scheduling algorithms.
 
+Disk Scheduling is done by an Operating Systems and
+each I/O will be processed in a disk.
+
+- 5,000 Disk cylinders from 0 - 4999
+- 1,000 Randomly generated cylinder requests
+
+FCFS - Any requests comes in first will be placed in first queue.
+This algorithm is very inefficient and requires a lot of
+Disk header movement.
+
+SSTF - Closest one from the header will be visited first.
+This algorithm is very efficient, because it has the least
+amount of Disk header movement.
+
+SCAN - Comparing Header and previous header, it sets the direction
+based on it. It's usually efficient, but the results may vary,
+because it goes only one direction and it has to reach either
+the very top or the bottom to change directions.
 ```
 
 ### Pictures:
-<a href = "PICS/pic1.png"><img src = "PICS/pic1.png">
+#### FCFS (First Come First Serve):
+<a href = "PICS/PICS1.png"><img src = "PICS/PICS1.png">
+
+#### SSTF (Shortest Seek Time First):
+<a href = "PICS/PICS2.png"><img src = "PICS/PICS2.png">
+
+#### SCAN (Elevator Algorithm):
+<a href = "PICS/PICS3.png"><img src = "PICS/PICS3.png">
 
 ### Assignment:
 

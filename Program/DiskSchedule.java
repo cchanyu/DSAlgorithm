@@ -9,7 +9,7 @@ public class DiskSchedule {
 	public int value1, value2, value3;
 	public int[] cylinder = new int[5000];
 	public int[] generated = new int[1000];
-	public int count, count2, temp, calc;
+	public int count, count2, temp, calc, ans;
 
 	public static enum Algorithm {
 		FCFS, SSTF, SCAN
@@ -121,10 +121,7 @@ public class DiskSchedule {
 		count2 = 0;
 		header = initialHeader;
 		header3 = initialHeader;
-
-		// System.out.println("Generated Length = " + generated.length);
 		generated[generated.length - 1] = initialHeader;
-
 		System.out.println("System: Header = " + initialHeader + ", Length = " + generated.length);
 
 		// sorting in ascending order
@@ -139,49 +136,58 @@ public class DiskSchedule {
 		}
 
 		// find the index
-		int len = generated.length;
-		int k = 0;
-		int ans = 0;
-		while (k < len) {
-			if (generated[k] == header) {
-				ans = k;
-				System.out.println("Head Pivot: " + ans);
-				break;
+		ans = findIndex(generated, header);
+		
+		// while ans is in index, it runs
+		header = generated[ans];
+		while ((0 < ans) && (ans < generated.length)) {
+			int before = 0, after = 0;
+			int dist1 = 0, dist2 = 0;
+
+			// calculates before distance
+			before = generated[ans - 1];
+			dist1 = Math.abs(header - cylinder[before]);
+			//System.out.println("Before: " + header + " - " + cylinder[before] + " = " + dist1);
+
+			// calculates after distance
+			after = generated[ans + 1];
+			dist2 = Math.abs(header - cylinder[after]);
+			//System.out.println("After: " + header + " - " + cylinder[after] + " = " + dist2);
+
+			// if before is farther than after, it picks future value
+			if (dist1 > dist2) {
+				ans = ans + 1;
+				header = generated[ans];
+				count2 = count2 + (dist2);
+				//System.out.println("New Header: " + header + ", Ans: " + ans + ", Length: " + generated.length);
 			} else {
-				k = k + 1;
+				ans = ans - 1;
+				header = generated[ans];
+				count2 = count2 + (dist1);
+				//System.out.println("New Header: " + header + ", Ans: " + ans + ", Length: " + generated.length);
 			}
+
+			generated = remove(generated, ans);
+
 		}
 
-		// add code
-		header = generated[ans];
-		int g = ans, z = ans, count4 = 1;
-		while (g > 0 || g < generated.length) {
-			int calc1 = 0, calc2 = 0;
-			int b4 = generated[z - count4];
-			int a4 = generated[z + count4];
-			calc1 = Math.abs(header - cylinder[b4]);
-			System.out.println("Before: " + header + " - " + cylinder[b4] + " = " + calc1);
-			calc2 = Math.abs(header - cylinder[a4]);
-			System.out.println("After: " + header + " - " + cylinder[a4] + " = " + calc2);
-
-			if (calc1 > calc2) {
-				header = generated[z + count4];
-				count2 = count2 + (calc2);
-				System.out.println("New Header: " + header);
-				generated = remove(generated, z);
-				z = g;
-				g--; count4 --;
-			} else {
-				header = generated[z - count4];
-				count2 = count2 + (calc1);
-				System.out.println("New Header: " + header);
-				generated = remove(generated, z);
-				z = g;
-				g++; count4 ++;
+		// when ans is either 0 or max, it runs
+		if (ans == 0) {
+			// going up
+			for (int q = ans+1; q < generated.length; q++) {
+				header = generated[q];
+				int calc = Math.abs(header - cylinder[generated[q - 1]]);
+				count2 = count2 + (calc);
+				count++;
 			}
-
-			// System.out.println("Generated[]: " + Arrays.toString(generated));
-			count++;
+		} else if (ans == generated.length) {
+			// going down
+			for (int q = ans-1; q > 0; q--) {
+				header = generated[q];
+				int calc = Math.abs(header - cylinder[generated[q - 1]]);
+				count2 = count2 + (calc);
+				count++;
+			}
 		}
 
 		System.out.println("System: Header = " + header3 + ", Move count = " + count2);
@@ -218,18 +224,7 @@ public class DiskSchedule {
 		}
 
 		// find the index
-		int len = generated.length;
-		int k = 0;
-		int ans = 0;
-		while (k < len) {
-			if (generated[k] == header) {
-				ans = k;
-				// System.out.println("Ans = " + ans);
-				break;
-			} else {
-				k++;
-			}
-		}
+				ans = findIndex(generated, header);
 
 		if (initialHeader < 2500) {
 
@@ -243,7 +238,7 @@ public class DiskSchedule {
 				count++;
 			}
 
-			// goes up elevator
+			// goes down elevator
 			// make it go to 0 and then up
 			count2 = count2 + Math.abs(header - 0);
 			// System.out.println("Header = " + header);
@@ -279,7 +274,7 @@ public class DiskSchedule {
 			count2 = count2 + header3;
 			header = 4999;
 
-			// counting up to the end
+			// counting down to the end
 			for (int g = ans; g > 0; g--) {
 				header = generated[g];
 				int calc = Math.abs(header - cylinder[generated[g - 1]]);
@@ -297,18 +292,35 @@ public class DiskSchedule {
 		return count2;
 	}
 
-	// Add remove function
+	// removes an index from the array
 	public static int[] remove(int[] generated, int index) {
-		
+
 		int[] temp = new int[generated.length - 1];
 
 		for (int i = 0, k = 0; i < generated.length; i++) {
 			if (i == index) {
-				continue;
+
+			} else {
+				temp[k++] = generated[i];
 			}
-			temp[k++] = generated[i];
 		}
 		return temp;
+	}
+
+	// Finding the index in an array
+	public static int findIndex(int[] generated, int header) {
+		int len = generated.length;
+		int k = 0, ans = 0;
+		while (k < len) {
+			if (generated[k] == header) {
+				ans = k;
+				System.out.println("Head Index: " + ans);
+				break;
+			} else {
+				k = k + 1;
+			}
+		}
+		return ans;
 	}
 
 	// Main method
