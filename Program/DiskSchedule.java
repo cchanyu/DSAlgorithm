@@ -5,7 +5,7 @@ import java.lang.Math;
 
 public class DiskSchedule {
 	// Initiating values
-	public int header, header2, header3;
+	public int header, header2, header3, pheader;
 	public int value1, value2, value3;
 	public int[] cylinder = new int[5000];
 	public int[] generated = new int[1000];
@@ -23,6 +23,10 @@ public class DiskSchedule {
 		Scanner sc = new Scanner(System.in);
 		System.out.print("System: Type the initial header: ");
 		int initialHeader = sc.nextInt();
+		
+		Scanner sc3 = new Scanner(System.in);
+		System.out.print("System: Type the previous header: ");
+		int prevHeader = sc3.nextInt();
 
 		Scanner sc2 = new Scanner(System.in);
 		System.out.print("System: Type the case: ");
@@ -42,7 +46,7 @@ public class DiskSchedule {
 			break;
 		case SCAN:
 			System.out.println("System: SCAN enum triggered.");
-			value3 = SCAN(initialHeader);
+			value3 = SCAN(initialHeader, prevHeader);
 			System.out.println("System: SCAN head movement = " + value3);
 			break;
 		}
@@ -203,11 +207,12 @@ public class DiskSchedule {
 	}
 
 	// Elevator Algorithm
-	public int SCAN(int initialHeader) {
+	public int SCAN(int initialHeader, int prevHeader) {
 		System.out.println("System: SCAN() is triggered.");
 
 		count = 0;
 		count2 = 0;
+		pheader = prevHeader;
 		header = initialHeader;
 		header3 = initialHeader;
 
@@ -230,7 +235,7 @@ public class DiskSchedule {
 		// find the index
 		ans = findIndex(generated, header);
 
-		if (initialHeader < 2500) {
+		if (initialHeader < prevHeader) {
 
 			// while it's less than the q it goes down elevator
 			for (int q = ans; q > 0; q--) {
@@ -260,7 +265,7 @@ public class DiskSchedule {
 			}
 
 			// If InitialHeader is closer to 5000, then it's different case
-		} else if (initialHeader > 2500) {
+		} else if (initialHeader > prevHeader) {
 
 			// while it's more than the q it goes up elevator
 			for (int q = ans; q < generated.length; q++) {
